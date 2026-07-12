@@ -1,0 +1,161 @@
+aid: sesame-hr
+url: https://raw.githubusercontent.com/api-evangelist/sesame-hr/refs/heads/main/apis.yml
+name: Sesame HR
+kind: company
+description: Sesame HR is an all-in-one HR and time-tracking platform used by small
+  and mid-sized companies across Spain, Latin America, and beyond to manage
+  employees, time clock (check-in / check-out), work hours, shifts and scheduling,
+  vacations, absences and leave, contracts, payroll data, and recruitment. The
+  Sesame Public API (v3) exposes that same functionality over a documented REST
+  interface authenticated with a Bearer API token, letting teams sync HRIS data
+  with payroll and ERP systems, build custom dashboards, and automate onboarding,
+  shift assignment, and absence-approval workflows.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Human Resources
+- HRIS
+- Time Tracking
+- Workforce Management
+- Employee Management
+- HR
+- Attendance
+- Absence Management
+- Scheduling
+- Payroll
+created: '2026-07-11'
+modified: '2026-07-11'
+specificationVersion: '0.19'
+apis:
+- aid: sesame-hr:sesame-hr-employees-api
+  name: Sesame HR Employees API
+  tags:
+  - Human Resources
+  - HRIS
+  - Employee Management
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  properties:
+  - url: https://apidocs.sesametime.com/introduction
+    type: Documentation
+  - url: https://apidocs.sesametime.com/
+    type: APIReference
+  - url: openapi/sesame-hr-openapi.yml
+    type: OpenAPI
+  - url: collections/sesame-hr.postman_collection.json
+    type: PostmanCollection
+  - url: collections/sesame-hr.opencollection.json
+    type: OpenCollection
+  description: Create, read, update, delete, and list employee records, plus manage
+    the manager relationships, roles, and contribution data attached to each person.
+    The core HRIS resource for syncing your workforce with payroll and ERP systems.
+- aid: sesame-hr:sesame-hr-time-tracking-api
+  name: Sesame HR Time Tracking API
+  tags:
+  - Time Tracking
+  - Attendance
+  - Work Hours
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  properties:
+  - url: https://apidocs.sesametime.com/introduction
+    type: Documentation
+  - url: https://apidocs.sesametime.com/
+    type: APIReference
+  - url: openapi/sesame-hr-openapi.yml
+    type: OpenAPI
+  - url: collections/sesame-hr.postman_collection.json
+    type: PostmanCollection
+  - url: collections/sesame-hr.opencollection.json
+    type: OpenCollection
+  description: Clock employees in and out, log and correct work entries and time
+    entries, and read worked-hours analytics (by weekday, night hours, and hours-bag
+    balances). Powers digital time-clock and attendance-reporting workflows.
+- aid: sesame-hr:sesame-hr-absences-api
+  name: Sesame HR Absences and Leave API
+  tags:
+  - Absence Management
+  - Vacations
+  - Leave
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  properties:
+  - url: https://apidocs.sesametime.com/introduction
+    type: Documentation
+  - url: https://apidocs.sesametime.com/
+    type: APIReference
+  - url: openapi/sesame-hr-openapi.yml
+    type: OpenAPI
+  - url: collections/sesame-hr.postman_collection.json
+    type: PostmanCollection
+  - url: collections/sesame-hr.opencollection.json
+    type: OpenCollection
+  description: Manage vacation and absence calendars, create and approve or reject
+    day-off requests, configure vacation policies, and administer holidays and
+    employee leave types across the workforce.
+- aid: sesame-hr:sesame-hr-departments-api
+  name: Sesame HR Departments and Org API
+  tags:
+  - Departments
+  - Organization
+  - Workforce Management
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  properties:
+  - url: https://apidocs.sesametime.com/introduction
+    type: Documentation
+  - url: https://apidocs.sesametime.com/
+    type: APIReference
+  - url: openapi/sesame-hr-openapi.yml
+    type: OpenAPI
+  - url: collections/sesame-hr.postman_collection.json
+    type: PostmanCollection
+  - url: collections/sesame-hr.opencollection.json
+    type: OpenCollection
+  description: Create and manage departments and offices, assign employees to them,
+    and read or update the organization chart (manager-by-employee) that structures
+    the company.
+- aid: sesame-hr:sesame-hr-scheduling-api
+  name: Sesame HR Scheduling and Shifts API
+  tags:
+  - Scheduling
+  - Shifts
+  - Workforce Management
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  properties:
+  - url: https://apidocs.sesametime.com/introduction
+    type: Documentation
+  - url: https://apidocs.sesametime.com/
+    type: APIReference
+  - url: openapi/sesame-hr-openapi.yml
+    type: OpenAPI
+  - url: collections/sesame-hr.postman_collection.json
+    type: PostmanCollection
+  - url: collections/sesame-hr.opencollection.json
+    type: OpenCollection
+  description: Build shift plans and schedule templates, assign shifts and free days
+    to employees through planners, and manage the recurring schedules that drive
+    workforce management and rota planning.
+common:
+- type: Authentication
+  url: authentication/sesame-hr-authentication.yml
+- type: LinkedIn
+  url: https://www.linkedin.com/company/sesamehr
+- type: Website
+  url: https://www.sesamehr.com
+- type: Documentation
+  url: https://apidocs.sesametime.com/introduction
+- type: Plans
+  url: plans/sesame-hr-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/sesame-hr-rate-limits.yml
+- type: FinOps
+  url: finops/sesame-hr-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

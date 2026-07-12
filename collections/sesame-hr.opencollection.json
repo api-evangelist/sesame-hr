@@ -1,0 +1,230 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Sesame HR Public API",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "Meta", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Show token info.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/info" },
+          "docs": "Returns metadata about the authenticated API token and its company."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Employees", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List employees.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/employees" },
+          "docs": "Lists employees for the company, with pagination and filtering."
+        },
+        {
+          "info": { "name": "Create employee.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees",
+            "body": { "type": "json", "data": "{\n  \"firstName\": \"\",\n  \"lastName\": \"\",\n  \"email\": \"\"\n}" }
+          },
+          "docs": "Creates a new employee record."
+        },
+        {
+          "info": { "name": "Get employee.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The employee UUID." } ]
+          },
+          "docs": "Retrieves a single employee by ID."
+        },
+        {
+          "info": { "name": "Update employee.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The employee UUID." } ],
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Updates an existing employee record."
+        },
+        {
+          "info": { "name": "Delete employee.", "type": "http" },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The employee UUID." } ]
+          },
+          "docs": "Deletes an employee record."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Time Tracking", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Clock in.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/work-entries/clock-in",
+            "body": { "type": "json", "data": "{\n  \"employeeId\": \"\"\n}" }
+          },
+          "docs": "Registers a check-in (clock-in) for an employee, starting a work entry."
+        },
+        {
+          "info": { "name": "Clock out.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/work-entries/clock-out",
+            "body": { "type": "json", "data": "{\n  \"employeeId\": \"\"\n}" }
+          },
+          "docs": "Registers a check-out (clock-out) for an employee, closing the open work entry."
+        },
+        {
+          "info": { "name": "List work entries.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/work-entries?employeeId=&from=&to=",
+            "params": [
+              { "name": "employeeId", "value": "", "type": "query", "description": "Filter by employee." },
+              { "name": "from", "value": "", "type": "query", "description": "Start date (YYYY-MM-DD)." },
+              { "name": "to", "value": "", "type": "query", "description": "End date (YYYY-MM-DD)." }
+            ]
+          },
+          "docs": "Lists work entries (time-clock records), filterable by employee and date range."
+        },
+        {
+          "info": { "name": "List worked hours by employee.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/worked-hours?from=&to=",
+            "params": [
+              { "name": "from", "value": "", "type": "query", "description": "Start date (YYYY-MM-DD)." },
+              { "name": "to", "value": "", "type": "query", "description": "End date (YYYY-MM-DD)." }
+            ]
+          },
+          "docs": "Returns aggregated worked-hours totals per employee over a date range."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Absences and Leave", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List vacation day-off requests.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests?status=",
+            "params": [ { "name": "status", "value": "", "type": "query", "description": "pending | accepted | rejected." } ]
+          },
+          "docs": "Lists vacation day-off requests, filterable by employee and status."
+        },
+        {
+          "info": { "name": "Create vacation day-off request.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests",
+            "body": { "type": "json", "data": "{\n  \"employeeId\": \"\",\n  \"from\": \"\",\n  \"to\": \"\"\n}" }
+          },
+          "docs": "Creates a vacation day-off request for an employee."
+        },
+        {
+          "info": { "name": "Accept vacation day-off request.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests/:id/accept",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The request UUID." } ]
+          },
+          "docs": "Approves a pending vacation day-off request."
+        },
+        {
+          "info": { "name": "Reject vacation day-off request.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests/:id/reject",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The request UUID." } ]
+          },
+          "docs": "Rejects a pending vacation day-off request."
+        },
+        {
+          "info": { "name": "List holidays.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/holidays" },
+          "docs": "Lists holidays defined across the company's holiday calendars."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Departments and Org", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List departments.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/departments" },
+          "docs": "Lists the company's departments."
+        },
+        {
+          "info": { "name": "Create department.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/departments",
+            "body": { "type": "json", "data": "{\n  \"name\": \"\"\n}" }
+          },
+          "docs": "Creates a new department."
+        },
+        {
+          "info": { "name": "List offices.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/offices" },
+          "docs": "Lists the company's offices (work centers)."
+        },
+        {
+          "info": { "name": "Get manager by employee.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/organization-chart/manager/:employeeId",
+            "params": [ { "name": "employeeId", "value": "", "type": "path", "description": "The employee UUID." } ]
+          },
+          "docs": "Returns the manager of a given employee in the organization chart."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Scheduling", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List planners.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/planners" },
+          "docs": "Lists the company's scheduling planners."
+        },
+        {
+          "info": { "name": "List shifts.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/shifts" },
+          "docs": "Lists the company's shift definitions."
+        },
+        {
+          "info": { "name": "Assign shifts to employees.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/planners/:id/shifts",
+            "params": [ { "name": "id", "value": "", "type": "path", "description": "The planner UUID." } ],
+            "body": { "type": "json", "data": "{\n  \"assignments\": []\n}" }
+          },
+          "docs": "Assigns one or more shifts to employees within a planner."
+        },
+        {
+          "info": { "name": "List schedule templates.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api-eu1.sesametime.com/core/v3/schedule-templates" },
+          "docs": "Lists reusable schedule templates."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

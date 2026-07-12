@@ -1,0 +1,45 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Sesame HR
+providerId: sesame-hr
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Human Resources
+- HRIS
+- Time Tracking
+- Rate Limiting
+- Quotas
+description: >-
+  The Sesame Public API (v3) enforces a documented rate limit of 1,000 requests
+  per minute per company. This limit is shared across all API tokens belonging
+  to the same company - the combined total from all tokens cannot exceed 1,000
+  requests per minute, so issuing additional tokens does not increase the ceiling.
+  The limit is organizational rather than per-token. Requests over the limit are
+  throttled with an HTTP 429 response.
+notes: >-
+  Rate-limit response header names (for example remaining / reset) are not
+  documented in the public docs as of the review date. Clients should implement
+  exponential backoff with jitter and honor Retry-After on 429 responses. Verify
+  current numbers at https://apidocs.sesametime.com/rate-limiting.
+sources:
+- https://apidocs.sesametime.com/rate-limiting
+- https://apidocs.sesametime.com/introduction
+responseCodes:
+  throttled: 429
+limits:
+- name: Public API Requests
+  scope: company
+  metric: requests
+  limit: 1000 per minute
+  notes: Shared across all API tokens belonging to the same company; not per-token.
+policies:
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on 429 responses.
+- name: Shared Company Budget
+  description: The 1,000 req/min budget is pooled across every token a company issues; adding tokens does not raise the limit.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

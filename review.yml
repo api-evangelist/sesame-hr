@@ -1,0 +1,116 @@
+aid: sesame-hr
+name: Sesame HR
+review:
+  question: Does Sesame HR expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-11'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. The Sesame Public API (v3) is entirely
+    request/response REST over HTTPS. Sesame's only server-push mechanism is
+    outbound webhooks (POST /core/v3/webhooks manages subscriptions that
+    Sesame delivers to your HTTP endpoints) - there is no client-facing
+    WebSocket (ws:// or wss://) or SSE transport on Sesame's own API to model.
+findings:
+  summary: |
+    Sesame HR does not publish a documented public WebSocket API. Sesame HR is
+    an all-in-one HR and time-tracking SaaS platform. Its public developer
+    surface is the Sesame Public API v3, documented at
+    https://apidocs.sesametime.com. The base host is region-specific
+    (https://api-{region}.sesametime.com, default region eu1) and every path is
+    prefixed with /core/v3. Authentication is a Bearer API token generated
+    self-serve in the admin panel (Settings > Integrations > API at
+    app.sesametime.com). The API is pure request/response REST covering
+    employees, time tracking (clock-in / clock-out, work entries, worked-hours
+    analytics), absences and leave, vacations, holidays, departments, offices,
+    the organization chart, scheduling (planners, shifts, schedule templates),
+    contracts, payroll data, and recruitment - roughly 500 endpoints. The only
+    push mechanism is outbound webhooks; no realtime, bidirectional, or
+    streaming WebSocket endpoint is documented on Sesame's own API.
+  accessModel: |
+    Public and self-serve for subscribers. Any company on a paid Sesame HR
+    subscription (or during the 14-day trial) can generate a Bearer API token
+    from the admin panel; there is no separate API application, approval, or
+    per-call fee. Usage is governed by a shared rate limit of 1,000 requests
+    per minute per company (pooled across all of that company's tokens). The
+    OpenAPI description is published at
+    https://apidocs.sesametime.com/openapi.json.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api-eu1.sesametime.com/core/v3
+      documented: true
+      note: Sesame Public API v3. Host region is account-specific (api-{region}.sesametime.com, default eu1); all paths prefixed with /core/v3.
+    - protocol: Webhook
+      scheme: https
+      documented: true
+      note: Outbound webhooks managed via POST /core/v3/webhooks. Sesame POSTs events to a configured HTTP endpoint - server-to-endpoint HTTP, not WebSocket.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in the Sesame Public API as of the review date.
+  endpointsConfirmedRest:
+    - GET    https://api-eu1.sesametime.com/core/v3/info
+    - GET    https://api-eu1.sesametime.com/core/v3/employees
+    - POST   https://api-eu1.sesametime.com/core/v3/employees
+    - GET    https://api-eu1.sesametime.com/core/v3/employees/{id}
+    - PATCH  https://api-eu1.sesametime.com/core/v3/employees/{id}
+    - DELETE https://api-eu1.sesametime.com/core/v3/employees/{id}
+    - POST   https://api-eu1.sesametime.com/core/v3/work-entries/clock-in
+    - POST   https://api-eu1.sesametime.com/core/v3/work-entries/clock-out
+    - GET    https://api-eu1.sesametime.com/core/v3/work-entries
+    - POST   https://api-eu1.sesametime.com/core/v3/work-entries
+    - GET    https://api-eu1.sesametime.com/core/v3/employees/worked-hours
+    - GET    https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests
+    - POST   https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests
+    - POST   https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests/{id}/accept
+    - POST   https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests/{id}/reject
+    - GET    https://api-eu1.sesametime.com/core/v3/holidays
+    - GET    https://api-eu1.sesametime.com/core/v3/departments
+    - POST   https://api-eu1.sesametime.com/core/v3/departments
+    - GET    https://api-eu1.sesametime.com/core/v3/offices
+    - GET    https://api-eu1.sesametime.com/core/v3/organization-chart/manager/{employeeId}
+    - GET    https://api-eu1.sesametime.com/core/v3/planners
+    - POST   https://api-eu1.sesametime.com/core/v3/planners/{id}/shifts
+    - GET    https://api-eu1.sesametime.com/core/v3/shifts
+    - GET    https://api-eu1.sesametime.com/core/v3/schedule-templates
+    - POST   https://api-eu1.sesametime.com/core/v3/webhooks
+  endpointsModeled:
+    - note: >-
+        Endpoint paths above are taken from the official documentation index
+        (https://apidocs.sesametime.com/llms.txt) and OpenAPI
+        (https://apidocs.sesametime.com/openapi.json). The request/response
+        field shapes in openapi/sesame-hr-openapi.yml are modeled generically
+        where the public docs do not publish a full JSON schema; verify exact
+        field names against the live OpenAPI during reconciliation.
+sources:
+  - url: https://apidocs.sesametime.com/introduction
+    type: Documentation
+    note: API overview, base host api-{region}.sesametime.com (default eu1), /core/v3 prefix, resource categories.
+  - url: https://apidocs.sesametime.com/authentication
+    type: Documentation
+    note: Bearer token auth; self-serve token creation in Settings > Integrations > API.
+  - url: https://apidocs.sesametime.com/rate-limiting
+    type: Documentation
+    note: 1,000 requests per minute per company, shared across all tokens. HTTP 429 when throttled.
+  - url: https://apidocs.sesametime.com/llms.txt
+    type: Documentation
+    note: Full documentation and endpoint index (~500 REST endpoints across 30+ resources).
+  - url: https://apidocs.sesametime.com/openapi.json
+    type: OpenAPI
+    note: Sesame Public API v3 OpenAPI. servers = https://api-{region}.sesametime.com (default eu1); Bearer security.
+  - url: https://www.sesamehr.com/pricing/
+    type: Pricing
+    note: Per-employee, per-month SaaS pricing (Starter/Professional/Enterprise); 14-day trial.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists. The Sesame Public API is
+    request/response REST, and its only push mechanism is outbound webhooks. No
+    AsyncAPI document was created because there is no server-push WebSocket or
+    SSE transport on Sesame's own API to model.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

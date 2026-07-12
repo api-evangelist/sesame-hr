@@ -1,0 +1,126 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Sesame HR
+providerId: sesame-hr
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Human Resources
+- HRIS
+- Time Tracking
+- Workforce Management
+- Plans
+description: >-
+  Sesame HR is sold as SaaS on a per-employee, per-month subscription, billed
+  annually, with pricing that varies by team size and the modules enabled. The
+  Public API is a feature of the platform rather than a separately-metered
+  product: any subscribing company can self-generate a Bearer API token from the
+  admin panel, and API usage is governed by a shared 1,000 requests/minute limit
+  rather than per-call fees. Published US list pricing is roughly $5.00
+  per user/month (Starter), $5.75 per user/month (Professional), and custom
+  pricing (Enterprise); annual billing is advertised from about $4.25 per
+  user/month. In the European market plans run roughly EUR 4.50 to EUR 8.00 per
+  employee/month. A 14-day free trial is available. These figures are indicative
+  list prices captured at review time and are not reconciled against a quote.
+notes: >-
+  Exact price depends on headcount and selected modules (time tracking,
+  scheduling, vacation management, recruitment, payroll integrations, etc.), and
+  regional pricing differs. There is no separate API price tier - API access is
+  included with the subscription. Verify current numbers on the Sesame HR
+  pricing page.
+sources:
+- https://www.sesamehr.com/pricing/
+- https://apidocs.sesametime.com/rate-limiting
+- https://apidocs.sesametime.com/introduction
+plans:
+- id: sesame-starter
+  name: Starter
+  type: paid
+  description: >-
+    Entry SaaS plan covering core HR, employee management, and time tracking.
+    Indicative US list price around $5.00 per user/month (from ~$4.25 per
+    user/month on annual billing). Includes self-serve Public API access.
+  entries:
+  - label: Per Employee Subscription
+    name: starter_seat
+    type: flat
+    metric: seat
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: ~$5.00 per user/month (from ~$4.25 annual); EUR ~4.50-8.00 in EU
+    userMultiplied: true
+  elements:
+  - name: Employee Management
+  - name: Time Tracking (Check-in / Check-out)
+  - name: Public API Access
+  - name: Vacation and Absence Management
+- id: sesame-professional
+  name: Professional
+  type: paid
+  description: >-
+    Mid-tier plan adding advanced workforce-management, scheduling, and
+    reporting capabilities. Indicative US list price around $5.75 per
+    user/month. Includes self-serve Public API access.
+  entries:
+  - label: Per Employee Subscription
+    name: professional_seat
+    type: flat
+    metric: seat
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: ~$5.75 per user/month
+    userMultiplied: true
+  elements:
+  - name: Everything in Starter
+  - name: Advanced Scheduling and Shifts
+  - name: Reporting and Analytics
+  - name: Public API Access
+- id: sesame-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Custom plan for larger organizations, with negotiated per-employee pricing,
+    additional modules (recruitment, payroll integrations), security review, and
+    dedicated support. Includes Public API access.
+  entries:
+  - label: Custom Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Custom Per-Employee Pricing
+  - name: All Modules
+  - name: Dedicated Support and SLAs
+  - name: Public API Access
+- id: sesame-trial
+  name: Free Trial
+  type: trial
+  description: 14-day free trial of the platform with no commitment.
+  entries:
+  - label: Trial Period
+    name: trial
+    type: flat
+    metric: days
+    limit: 14
+    timeFrame: once
+    geo: global
+    unit: 1
+    price: free for 14 days
+    userMultiplied: false
+  elements:
+  - name: Platform Evaluation
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

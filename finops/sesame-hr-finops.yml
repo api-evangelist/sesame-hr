@@ -1,0 +1,88 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Sesame HR
+providerId: sesame-hr
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Human Resources
+- HRIS
+- Time Tracking
+- Workforce Management
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Sesame HR spend. Sesame HR is a per-employee, per-month SaaS
+  subscription billed annually; cost scales primarily with headcount (active
+  employee seats) and the set of modules enabled. The Public API does not carry
+  its own usage-based invoice - API access is included with the subscription and
+  bounded by a shared 1,000 requests/minute rate limit rather than metered per
+  call. The main cost levers are therefore seat count, plan tier, and module
+  selection, not API traffic.
+notes: >-
+  Per-seat rates vary by region and negotiated terms; verify on the Sesame HR
+  pricing page. Because billing is seat-based, deprovisioning inactive employees
+  and right-sizing module add-ons are the primary optimization levers.
+sources:
+- https://www.sesamehr.com/pricing/
+- https://apidocs.sesametime.com/introduction
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Sesame HR
+serviceCategory: Human Resources and Workforce Management
+billingModel:
+  pricingCategory: Subscription
+  billingFrequency: Annual
+  billingCurrency: USD
+  chargeCategories:
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Sesame HR
+  ServiceCategory: Human Resources and Workforce Management
+  ProviderName: Sesame HR
+  PublisherName: Sesame HR
+  InvoiceIssuerName: Sesame HR
+  BillingCurrency: USD
+  ChargeCategory: Purchase
+  PricingCategory: Subscription
+meters:
+- name: employee_seats
+  description: Active employee seats subscribed, billed per user per month.
+  unit: seats
+  aggregation: sum
+  dimensions:
+  - company
+  - plan
+- name: modules
+  description: Optional modules enabled (scheduling, recruitment, payroll integrations) that affect per-seat price.
+  unit: modules
+  aggregation: sum
+  dimensions:
+  - company
+- name: api_requests
+  description: Public API requests. Included in the subscription (no per-call charge); capped at 1,000/min per company.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - company
+principles:
+- name: Visibility
+  description: Track active employee seats and enabled modules per company; API traffic is unbilled but monitor it against the 1,000/min shared limit.
+- name: Allocation
+  description: Map seats to departments/offices so subscription cost aligns to internal cost centers.
+- name: Optimization
+  description: Deprovision inactive employees promptly, prefer annual billing for the lower per-seat rate, and enable only the modules in use.
+- name: Accountability
+  description: Assign an owner for the Sesame HR subscription and review seat counts and module add-ons each renewal cycle.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
