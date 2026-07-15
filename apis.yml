@@ -142,6 +142,8 @@ apis:
     to employees through planners, and manage the recurring schedules that drive
     workforce management and rota planning.
 common:
+- type: AgenticAccess
+  url: agentic-access/sesame-hr-agentic-access.yml
 - type: Authentication
   url: authentication/sesame-hr-authentication.yml
 - type: LinkedIn
