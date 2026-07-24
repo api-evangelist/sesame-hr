@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: Sesame HR Public Absences and Leave Employees API
+  description: The Sesame Public API (v3) exposes the Sesame HR platform - employees, time tracking (check-in / check-out), work hours, shifts and scheduling, vacations, absences and leave, departments, offices, and the organization chart - over a documented REST interface. All requests are authenticated with a Bearer API token generated in the Sesame admin panel (Settings > Integrations > API at app.sesametime.com). The base host is region-specific (api-{region}.sesametime.com, default region eu1) and every path is prefixed with /core/v3. This document models the subset of the ~500-endpoint API most relevant to HRIS, time-tracking, and workforce-management use cases; endpoint paths and the Bearer scheme are taken from the official documentation, while some request/response field shapes are modeled generically where the public docs do not publish a full schema.
+  version: 3.0.0
+  contact:
+    name: Sesame HR
+    url: https://www.sesamehr.com
+servers:
+- url: https://api-eu1.sesametime.com/core/v3
+  description: Sesame Public API v3 (EU region eu1 - default; region is account-specific)
+security:
+- bearerAuth: []
+tags:
+- name: Employees
+  description: Employee records and their manager relationships.
+paths:
+  /employees:
+    get:
+      operationId: listEmployees
+      tags:
+      - Employees
+      summary: List employees
+      description: Lists employees for the company, with pagination and filtering.
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A paginated list of employees.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createEmployee
+      tags:
+      - Employees
+      summary: Create employee
+      description: Creates a new employee record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeInput'
+      responses:
+        '201':
+          description: The created employee.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /employees/{id}:
+    parameters:
+    - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getEmployee
+      tags:
+      - Employees
+      summary: Get employee
+      description: Retrieves a single employee by ID.
+      responses:
+        '200':
+          description: The requested employee.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateEmployee
+      tags:
+      - Employees
+      summary: Update employee
+      description: Updates an existing employee record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeInput'
+      responses:
+        '200':
+          description: The updated employee.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteEmployee
+      tags:
+      - Employees
+      summary: Delete employee
+      description: Deletes an employee record.
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{id}/managers:
+    parameters:
+    - $ref: '#/components/parameters/Id'
+    get:
+      operationId: listEmployeeManagers
+      tags:
+      - Employees
+      summary: List employee managers
+      description: Lists the managers assigned to an employee.
+      responses:
+        '200':
+          description: The employee's managers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: assignEmployeeManager
+      tags:
+      - Employees
+      summary: Assign manager
+      description: Assigns a manager to an employee.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - managerId
+              properties:
+                managerId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Manager assigned.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    EmployeeInput:
+      type: object
+      required:
+      - firstName
+      - lastName
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        code:
+          type: string
+          description: Employee code / identifier used internally.
+        phone:
+          type: string
+        nid:
+          type: string
+          description: National identity document number.
+    DeleteResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    Employee:
+      allOf:
+      - $ref: '#/components/schemas/EmployeeInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          companyId:
+            type: string
+            format: uuid
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+    PageMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        lastPage:
+          type: integer
+        total:
+          type: integer
+    EmployeeList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number for pagination.
+      schema:
+        type: integer
+        default: 1
+    Id:
+      name: id
+      in: path
+      required: true
+      description: The UUID of the resource.
+      schema:
+        type: string
+        format: uuid
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        default: 100
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer API token generated in the Sesame admin panel under Settings > Integrations > API at app.sesametime.com. Passed as `Authorization: Bearer YOUR_API_TOKEN`.'

@@ -1,0 +1,359 @@
+openapi: 3.0.3
+info:
+  title: Sesame HR Public Absences and Leave Departments and Org API
+  description: The Sesame Public API (v3) exposes the Sesame HR platform - employees, time tracking (check-in / check-out), work hours, shifts and scheduling, vacations, absences and leave, departments, offices, and the organization chart - over a documented REST interface. All requests are authenticated with a Bearer API token generated in the Sesame admin panel (Settings > Integrations > API at app.sesametime.com). The base host is region-specific (api-{region}.sesametime.com, default region eu1) and every path is prefixed with /core/v3. This document models the subset of the ~500-endpoint API most relevant to HRIS, time-tracking, and workforce-management use cases; endpoint paths and the Bearer scheme are taken from the official documentation, while some request/response field shapes are modeled generically where the public docs do not publish a full schema.
+  version: 3.0.0
+  contact:
+    name: Sesame HR
+    url: https://www.sesamehr.com
+servers:
+- url: https://api-eu1.sesametime.com/core/v3
+  description: Sesame Public API v3 (EU region eu1 - default; region is account-specific)
+security:
+- bearerAuth: []
+tags:
+- name: Departments and Org
+  description: Departments, offices, and the organization chart.
+paths:
+  /departments:
+    get:
+      operationId: listDepartments
+      tags:
+      - Departments and Org
+      summary: List departments
+      description: Lists the company's departments.
+      responses:
+        '200':
+          description: A list of departments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createDepartment
+      tags:
+      - Departments and Org
+      summary: Create department
+      description: Creates a new department.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentInput'
+      responses:
+        '201':
+          description: The created department.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /departments/{id}:
+    parameters:
+    - $ref: '#/components/parameters/Id'
+    patch:
+      operationId: updateDepartment
+      tags:
+      - Departments and Org
+      summary: Update department
+      description: Updates a department.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentInput'
+      responses:
+        '200':
+          description: The updated department.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteDepartment
+      tags:
+      - Departments and Org
+      summary: Delete department
+      description: Deletes a department.
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{id}/departments:
+    parameters:
+    - $ref: '#/components/parameters/Id'
+    get:
+      operationId: listEmployeeDepartments
+      tags:
+      - Departments and Org
+      summary: List employee department assignments
+      description: Lists the departments an employee is assigned to.
+      responses:
+        '200':
+          description: The employee's department assignments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: assignEmployeeDepartment
+      tags:
+      - Departments and Org
+      summary: Assign employee to department
+      description: Assigns an employee to a department.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - departmentId
+              properties:
+                departmentId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Assignment result.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /offices:
+    get:
+      operationId: listOffices
+      tags:
+      - Departments and Org
+      summary: List offices
+      description: Lists the company's offices (work centers).
+      responses:
+        '200':
+          description: A list of offices.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Office'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createOffice
+      tags:
+      - Departments and Org
+      summary: Create office
+      description: Creates a new office / work center.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfficeInput'
+      responses:
+        '201':
+          description: The created office.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Office'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /organization-chart/manager/{employeeId}:
+    parameters:
+    - name: employeeId
+      in: path
+      required: true
+      description: The ID of the employee.
+      schema:
+        type: string
+        format: uuid
+    get:
+      operationId: getManagerByEmployee
+      tags:
+      - Departments and Org
+      summary: Get manager by employee
+      description: Returns the manager of a given employee in the organization chart.
+      responses:
+        '200':
+          description: The employee's manager.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    DepartmentInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    EmployeeInput:
+      type: object
+      required:
+      - firstName
+      - lastName
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        code:
+          type: string
+          description: Employee code / identifier used internally.
+        phone:
+          type: string
+        nid:
+          type: string
+          description: National identity document number.
+    DeleteResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    OfficeInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+    Employee:
+      allOf:
+      - $ref: '#/components/schemas/EmployeeInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          companyId:
+            type: string
+            format: uuid
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+    Office:
+      allOf:
+      - $ref: '#/components/schemas/OfficeInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+    Department:
+      allOf:
+      - $ref: '#/components/schemas/DepartmentInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: The UUID of the resource.
+      schema:
+        type: string
+        format: uuid
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer API token generated in the Sesame admin panel under Settings > Integrations > API at app.sesametime.com. Passed as `Authorization: Bearer YOUR_API_TOKEN`.'

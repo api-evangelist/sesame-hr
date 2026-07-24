@@ -1,0 +1,279 @@
+openapi: 3.0.3
+info:
+  title: Sesame HR Public Absences and Leave Time Tracking API
+  description: The Sesame Public API (v3) exposes the Sesame HR platform - employees, time tracking (check-in / check-out), work hours, shifts and scheduling, vacations, absences and leave, departments, offices, and the organization chart - over a documented REST interface. All requests are authenticated with a Bearer API token generated in the Sesame admin panel (Settings > Integrations > API at app.sesametime.com). The base host is region-specific (api-{region}.sesametime.com, default region eu1) and every path is prefixed with /core/v3. This document models the subset of the ~500-endpoint API most relevant to HRIS, time-tracking, and workforce-management use cases; endpoint paths and the Bearer scheme are taken from the official documentation, while some request/response field shapes are modeled generically where the public docs do not publish a full schema.
+  version: 3.0.0
+  contact:
+    name: Sesame HR
+    url: https://www.sesamehr.com
+servers:
+- url: https://api-eu1.sesametime.com/core/v3
+  description: Sesame Public API v3 (EU region eu1 - default; region is account-specific)
+security:
+- bearerAuth: []
+tags:
+- name: Time Tracking
+  description: Clock in / out, work entries, and worked-hours analytics.
+paths:
+  /work-entries/clock-in:
+    post:
+      operationId: clockIn
+      tags:
+      - Time Tracking
+      summary: Clock in
+      description: Registers a check-in (clock-in) for an employee, starting a work entry.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClockInput'
+      responses:
+        '200':
+          description: The opened work entry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /work-entries/clock-out:
+    post:
+      operationId: clockOut
+      tags:
+      - Time Tracking
+      summary: Clock out
+      description: Registers a check-out (clock-out) for an employee, closing the open work entry.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClockInput'
+      responses:
+        '200':
+          description: The closed work entry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /work-entries:
+    get:
+      operationId: listWorkEntries
+      tags:
+      - Time Tracking
+      summary: List work entries
+      description: Lists work entries (time-clock records), filterable by employee and date range.
+      parameters:
+      - name: employeeId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A paginated list of work entries.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkEntry'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createWorkEntry
+      tags:
+      - Time Tracking
+      summary: Create work entry
+      description: Creates a work entry directly (for manual or corrected time-clock records).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkEntryInput'
+      responses:
+        '201':
+          description: The created work entry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /employees/worked-hours:
+    get:
+      operationId: listWorkedHours
+      tags:
+      - Time Tracking
+      summary: List worked hours by employee
+      description: Returns aggregated worked-hours totals per employee over a date range.
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Worked-hours aggregates.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        employeeId:
+                          type: string
+                          format: uuid
+                        seconds:
+                          type: integer
+                        from:
+                          type: string
+                          format: date
+                        to:
+                          type: string
+                          format: date
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    WorkEntryInput:
+      type: object
+      required:
+      - employeeId
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        workEntryIn:
+          type: string
+          format: date-time
+          description: Check-in timestamp.
+        workEntryOut:
+          type: string
+          format: date-time
+          description: Check-out timestamp.
+    WorkEntry:
+      allOf:
+      - $ref: '#/components/schemas/WorkEntryInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          workedSeconds:
+            type: integer
+          source:
+            type: string
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    ClockInput:
+      type: object
+      required:
+      - employeeId
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        coordinates:
+          type: object
+          description: Optional GPS coordinates captured at check time.
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
+        origin:
+          type: string
+          description: Origin of the check (for example web, app, or device).
+    PageMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        lastPage:
+          type: integer
+        total:
+          type: integer
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number for pagination.
+      schema:
+        type: integer
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        default: 100
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer API token generated in the Sesame admin panel under Settings > Integrations > API at app.sesametime.com. Passed as `Authorization: Bearer YOUR_API_TOKEN`.'

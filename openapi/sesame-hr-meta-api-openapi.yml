@@ -1,0 +1,58 @@
+openapi: 3.0.3
+info:
+  title: Sesame HR Public Absences and Leave Meta API
+  description: The Sesame Public API (v3) exposes the Sesame HR platform - employees, time tracking (check-in / check-out), work hours, shifts and scheduling, vacations, absences and leave, departments, offices, and the organization chart - over a documented REST interface. All requests are authenticated with a Bearer API token generated in the Sesame admin panel (Settings > Integrations > API at app.sesametime.com). The base host is region-specific (api-{region}.sesametime.com, default region eu1) and every path is prefixed with /core/v3. This document models the subset of the ~500-endpoint API most relevant to HRIS, time-tracking, and workforce-management use cases; endpoint paths and the Bearer scheme are taken from the official documentation, while some request/response field shapes are modeled generically where the public docs do not publish a full schema.
+  version: 3.0.0
+  contact:
+    name: Sesame HR
+    url: https://www.sesamehr.com
+servers:
+- url: https://api-eu1.sesametime.com/core/v3
+  description: Sesame Public API v3 (EU region eu1 - default; region is account-specific)
+security:
+- bearerAuth: []
+tags:
+- name: Meta
+  description: Token and account metadata.
+paths:
+  /info:
+    get:
+      operationId: getTokenInfo
+      tags:
+      - Meta
+      summary: Show token info
+      description: Returns metadata about the authenticated API token and its company. Useful for verifying that a Bearer token is valid.
+      responses:
+        '200':
+          description: Token and company metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer API token generated in the Sesame admin panel under Settings > Integrations > API at app.sesametime.com. Passed as `Authorization: Bearer YOUR_API_TOKEN`.'
