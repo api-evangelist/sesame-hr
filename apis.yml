@@ -10,7 +10,20 @@ description: Sesame HR is an all-in-one HR and time-tracking platform used by sm
   interface authenticated with a Bearer API token, letting teams sync HRIS data
   with payroll and ERP systems, build custom dashboards, and automate onboarding,
   shift assignment, and absence-approval workflows.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: true
+  try_now: true
+  public: false
+  label: Freemium (free trial) · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/sesame-hr.png
 tags:
 - Human Resources
 - HRIS
@@ -26,121 +39,132 @@ created: '2026-07-11'
 modified: '2026-07-11'
 specificationVersion: '0.19'
 apis:
+- aid: sesame-hr:sesame-hr-absences-and-leave-api
+  name: Sesame HR Absences and Leave API
+  description: Vacation and absence calendars, day-off requests, holidays, and leave.
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  tags:
+  - Absences and Leave
+  properties:
+  - type: OpenAPI
+    url: openapi/sesame-hr-absences-and-leave-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.sesametime.com/introduction
+  - type: APIReference
+    url: https://apidocs.sesametime.com/
+  - type: PostmanCollection
+    url: collections/sesame-hr.postman_collection.json
+  - type: OpenCollection
+    url: collections/sesame-hr.opencollection.json
+- aid: sesame-hr:sesame-hr-departments-and-org-api
+  name: Sesame HR Departments and Org API
+  description: Departments, offices, and the organization chart.
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  tags:
+  - Departments and Org
+  properties:
+  - type: OpenAPI
+    url: openapi/sesame-hr-departments-and-org-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.sesametime.com/introduction
+  - type: APIReference
+    url: https://apidocs.sesametime.com/
+  - type: PostmanCollection
+    url: collections/sesame-hr.postman_collection.json
+  - type: OpenCollection
+    url: collections/sesame-hr.opencollection.json
 - aid: sesame-hr:sesame-hr-employees-api
   name: Sesame HR Employees API
-  tags:
-  - Human Resources
-  - HRIS
-  - Employee Management
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  description: Employee records and their manager relationships.
   humanURL: https://apidocs.sesametime.com/introduction
   baseURL: https://api-eu1.sesametime.com/core/v3
-  properties:
-  - url: https://apidocs.sesametime.com/introduction
-    type: Documentation
-  - url: https://apidocs.sesametime.com/
-    type: APIReference
-  - url: openapi/sesame-hr-openapi.yml
-    type: OpenAPI
-  - url: collections/sesame-hr.postman_collection.json
-    type: PostmanCollection
-  - url: collections/sesame-hr.opencollection.json
-    type: OpenCollection
-  description: Create, read, update, delete, and list employee records, plus manage
-    the manager relationships, roles, and contribution data attached to each person.
-    The core HRIS resource for syncing your workforce with payroll and ERP systems.
-- aid: sesame-hr:sesame-hr-time-tracking-api
-  name: Sesame HR Time Tracking API
   tags:
-  - Time Tracking
-  - Attendance
-  - Work Hours
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  - Employees
+  properties:
+  - type: OpenAPI
+    url: openapi/sesame-hr-employees-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.sesametime.com/introduction
+  - type: APIReference
+    url: https://apidocs.sesametime.com/
+  - type: PostmanCollection
+    url: collections/sesame-hr.postman_collection.json
+  - type: OpenCollection
+    url: collections/sesame-hr.opencollection.json
+- aid: sesame-hr:sesame-hr-meta-api
+  name: Sesame HR Meta API
+  description: Token and account metadata.
   humanURL: https://apidocs.sesametime.com/introduction
   baseURL: https://api-eu1.sesametime.com/core/v3
-  properties:
-  - url: https://apidocs.sesametime.com/introduction
-    type: Documentation
-  - url: https://apidocs.sesametime.com/
-    type: APIReference
-  - url: openapi/sesame-hr-openapi.yml
-    type: OpenAPI
-  - url: collections/sesame-hr.postman_collection.json
-    type: PostmanCollection
-  - url: collections/sesame-hr.opencollection.json
-    type: OpenCollection
-  description: Clock employees in and out, log and correct work entries and time
-    entries, and read worked-hours analytics (by weekday, night hours, and hours-bag
-    balances). Powers digital time-clock and attendance-reporting workflows.
-- aid: sesame-hr:sesame-hr-absences-api
-  name: Sesame HR Absences and Leave API
   tags:
-  - Absence Management
-  - Vacations
-  - Leave
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://apidocs.sesametime.com/introduction
-  baseURL: https://api-eu1.sesametime.com/core/v3
+  - Meta
   properties:
-  - url: https://apidocs.sesametime.com/introduction
-    type: Documentation
-  - url: https://apidocs.sesametime.com/
-    type: APIReference
-  - url: openapi/sesame-hr-openapi.yml
-    type: OpenAPI
-  - url: collections/sesame-hr.postman_collection.json
-    type: PostmanCollection
-  - url: collections/sesame-hr.opencollection.json
-    type: OpenCollection
-  description: Manage vacation and absence calendars, create and approve or reject
-    day-off requests, configure vacation policies, and administer holidays and
-    employee leave types across the workforce.
-- aid: sesame-hr:sesame-hr-departments-api
-  name: Sesame HR Departments and Org API
-  tags:
-  - Departments
-  - Organization
-  - Workforce Management
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://apidocs.sesametime.com/introduction
-  baseURL: https://api-eu1.sesametime.com/core/v3
-  properties:
-  - url: https://apidocs.sesametime.com/introduction
-    type: Documentation
-  - url: https://apidocs.sesametime.com/
-    type: APIReference
-  - url: openapi/sesame-hr-openapi.yml
-    type: OpenAPI
-  - url: collections/sesame-hr.postman_collection.json
-    type: PostmanCollection
-  - url: collections/sesame-hr.opencollection.json
-    type: OpenCollection
-  description: Create and manage departments and offices, assign employees to them,
-    and read or update the organization chart (manager-by-employee) that structures
-    the company.
+  - type: OpenAPI
+    url: openapi/sesame-hr-meta-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.sesametime.com/introduction
+  - type: APIReference
+    url: https://apidocs.sesametime.com/
+  - type: PostmanCollection
+    url: collections/sesame-hr.postman_collection.json
+  - type: OpenCollection
+    url: collections/sesame-hr.opencollection.json
 - aid: sesame-hr:sesame-hr-scheduling-api
-  name: Sesame HR Scheduling and Shifts API
+  name: Sesame HR Scheduling API
+  description: Planners, shifts, and schedule templates.
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
   tags:
   - Scheduling
-  - Shifts
-  - Workforce Management
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  properties:
+  - type: OpenAPI
+    url: openapi/sesame-hr-scheduling-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.sesametime.com/introduction
+  - type: APIReference
+    url: https://apidocs.sesametime.com/
+  - type: PostmanCollection
+    url: collections/sesame-hr.postman_collection.json
+  - type: OpenCollection
+    url: collections/sesame-hr.opencollection.json
+- aid: sesame-hr:sesame-hr-time-tracking-api
+  name: Sesame HR Time Tracking API
+  description: Clock in / out, work entries, and worked-hours analytics.
   humanURL: https://apidocs.sesametime.com/introduction
   baseURL: https://api-eu1.sesametime.com/core/v3
+  tags:
+  - Time Tracking
   properties:
-  - url: https://apidocs.sesametime.com/introduction
-    type: Documentation
-  - url: https://apidocs.sesametime.com/
-    type: APIReference
-  - url: openapi/sesame-hr-openapi.yml
-    type: OpenAPI
-  - url: collections/sesame-hr.postman_collection.json
-    type: PostmanCollection
-  - url: collections/sesame-hr.opencollection.json
-    type: OpenCollection
-  description: Build shift plans and schedule templates, assign shifts and free days
-    to employees through planners, and manage the recurring schedules that drive
-    workforce management and rota planning.
+  - type: OpenAPI
+    url: openapi/sesame-hr-time-tracking-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.sesametime.com/introduction
+  - type: APIReference
+    url: https://apidocs.sesametime.com/
+  - type: PostmanCollection
+    url: collections/sesame-hr.postman_collection.json
+  - type: OpenCollection
+    url: collections/sesame-hr.opencollection.json
+- aid: sesame-hr:sesame-hr-webhooks-api
+  name: Sesame HR Webhooks API
+  description: Webhook subscription management.
+  humanURL: https://apidocs.sesametime.com/introduction
+  baseURL: https://api-eu1.sesametime.com/core/v3
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/sesame-hr-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.sesametime.com/introduction
+  - type: APIReference
+    url: https://apidocs.sesametime.com/
+  - type: PostmanCollection
+    url: collections/sesame-hr.postman_collection.json
+  - type: OpenCollection
+    url: collections/sesame-hr.opencollection.json
 common:
 - type: AgenticAccess
   url: agentic-access/sesame-hr-agentic-access.yml
