@@ -1,0 +1,26 @@
+{
+  "provider": "sesame-hr",
+  "sources": [
+    "sesame-hr-absences-and-leave-api-openapi.yml",
+    "sesame-hr-departments-and-org-api-openapi.yml",
+    "sesame-hr-employees-api-openapi.yml",
+    "sesame-hr-meta-api-openapi.yml",
+    "sesame-hr-scheduling-api-openapi.yml",
+    "sesame-hr-time-tracking-api-openapi.yml",
+    "sesame-hr-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "sesame-hr-absences-and-leave-api-openapi.yml",
+    "sesame-hr-departments-and-org-api-openapi.yml",
+    "sesame-hr-employees-api-openapi.yml",
+    "sesame-hr-meta-api-openapi.yml",
+    "sesame-hr-scheduling-api-openapi.yml",
+    "sesame-hr-time-tracking-api-openapi.yml",
+    "sesame-hr-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

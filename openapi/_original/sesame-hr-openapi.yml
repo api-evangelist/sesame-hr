@@ -1,0 +1,1153 @@
+openapi: 3.0.3
+info:
+  title: Sesame HR Public API
+  description: >-
+    The Sesame Public API (v3) exposes the Sesame HR platform - employees, time
+    tracking (check-in / check-out), work hours, shifts and scheduling,
+    vacations, absences and leave, departments, offices, and the organization
+    chart - over a documented REST interface. All requests are authenticated
+    with a Bearer API token generated in the Sesame admin panel (Settings >
+    Integrations > API at app.sesametime.com). The base host is region-specific
+    (api-{region}.sesametime.com, default region eu1) and every path is prefixed
+    with /core/v3. This document models the subset of the ~500-endpoint API most
+    relevant to HRIS, time-tracking, and workforce-management use cases; endpoint
+    paths and the Bearer scheme are taken from the official documentation, while
+    some request/response field shapes are modeled generically where the public
+    docs do not publish a full schema.
+  version: 3.0.0
+  contact:
+    name: Sesame HR
+    url: https://www.sesamehr.com
+servers:
+  - url: https://api-eu1.sesametime.com/core/v3
+    description: Sesame Public API v3 (EU region eu1 - default; region is account-specific)
+security:
+  - bearerAuth: []
+tags:
+  - name: Meta
+    description: Token and account metadata.
+  - name: Employees
+    description: Employee records and their manager relationships.
+  - name: Time Tracking
+    description: Clock in / out, work entries, and worked-hours analytics.
+  - name: Absences and Leave
+    description: Vacation and absence calendars, day-off requests, holidays, and leave.
+  - name: Departments and Org
+    description: Departments, offices, and the organization chart.
+  - name: Scheduling
+    description: Planners, shifts, and schedule templates.
+  - name: Webhooks
+    description: Webhook subscription management.
+paths:
+  /info:
+    get:
+      operationId: getTokenInfo
+      tags:
+        - Meta
+      summary: Show token info
+      description: Returns metadata about the authenticated API token and its company. Useful for verifying that a Bearer token is valid.
+      responses:
+        '200':
+          description: Token and company metadata.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /employees:
+    get:
+      operationId: listEmployees
+      tags:
+        - Employees
+      summary: List employees
+      description: Lists employees for the company, with pagination and filtering.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A paginated list of employees.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createEmployee
+      tags:
+        - Employees
+      summary: Create employee
+      description: Creates a new employee record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeInput'
+      responses:
+        '201':
+          description: The created employee.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /employees/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: getEmployee
+      tags:
+        - Employees
+      summary: Get employee
+      description: Retrieves a single employee by ID.
+      responses:
+        '200':
+          description: The requested employee.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateEmployee
+      tags:
+        - Employees
+      summary: Update employee
+      description: Updates an existing employee record.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeInput'
+      responses:
+        '200':
+          description: The updated employee.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteEmployee
+      tags:
+        - Employees
+      summary: Delete employee
+      description: Deletes an employee record.
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{id}/managers:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: listEmployeeManagers
+      tags:
+        - Employees
+      summary: List employee managers
+      description: Lists the managers assigned to an employee.
+      responses:
+        '200':
+          description: The employee's managers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: assignEmployeeManager
+      tags:
+        - Employees
+      summary: Assign manager
+      description: Assigns a manager to an employee.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - managerId
+              properties:
+                managerId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Manager assigned.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /work-entries/clock-in:
+    post:
+      operationId: clockIn
+      tags:
+        - Time Tracking
+      summary: Clock in
+      description: Registers a check-in (clock-in) for an employee, starting a work entry.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClockInput'
+      responses:
+        '200':
+          description: The opened work entry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /work-entries/clock-out:
+    post:
+      operationId: clockOut
+      tags:
+        - Time Tracking
+      summary: Clock out
+      description: Registers a check-out (clock-out) for an employee, closing the open work entry.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClockInput'
+      responses:
+        '200':
+          description: The closed work entry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /work-entries:
+    get:
+      operationId: listWorkEntries
+      tags:
+        - Time Tracking
+      summary: List work entries
+      description: Lists work entries (time-clock records), filterable by employee and date range.
+      parameters:
+        - name: employeeId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: A paginated list of work entries.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkEntry'
+                  meta:
+                    $ref: '#/components/schemas/PageMeta'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createWorkEntry
+      tags:
+        - Time Tracking
+      summary: Create work entry
+      description: Creates a work entry directly (for manual or corrected time-clock records).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkEntryInput'
+      responses:
+        '201':
+          description: The created work entry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /employees/worked-hours:
+    get:
+      operationId: listWorkedHours
+      tags:
+        - Time Tracking
+      summary: List worked hours by employee
+      description: Returns aggregated worked-hours totals per employee over a date range.
+      parameters:
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Worked-hours aggregates.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        employeeId:
+                          type: string
+                          format: uuid
+                        seconds:
+                          type: integer
+                        from:
+                          type: string
+                          format: date
+                        to:
+                          type: string
+                          format: date
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /vacation-day-off-requests:
+    get:
+      operationId: listVacationDayOffRequests
+      tags:
+        - Absences and Leave
+      summary: List vacation day-off requests
+      description: Lists vacation day-off requests, filterable by employee and status.
+      parameters:
+        - name: employeeId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending
+              - accepted
+              - rejected
+      responses:
+        '200':
+          description: A list of vacation day-off requests.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DayOffRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createVacationDayOffRequest
+      tags:
+        - Absences and Leave
+      summary: Create vacation day-off request
+      description: Creates a vacation day-off request for an employee.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DayOffRequestInput'
+      responses:
+        '201':
+          description: The created request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DayOffRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /vacation-day-off-requests/{id}/accept:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    post:
+      operationId: acceptVacationDayOffRequest
+      tags:
+        - Absences and Leave
+      summary: Accept vacation day-off request
+      description: Approves a pending vacation day-off request.
+      responses:
+        '200':
+          description: The accepted request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DayOffRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /vacation-day-off-requests/{id}/reject:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    post:
+      operationId: rejectVacationDayOffRequest
+      tags:
+        - Absences and Leave
+      summary: Reject vacation day-off request
+      description: Rejects a pending vacation day-off request.
+      responses:
+        '200':
+          description: The rejected request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DayOffRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /holidays:
+    get:
+      operationId: listHolidays
+      tags:
+        - Absences and Leave
+      summary: List holidays
+      description: Lists holidays defined across the company's holiday calendars.
+      responses:
+        '200':
+          description: A list of holidays.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        date:
+                          type: string
+                          format: date
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /departments:
+    get:
+      operationId: listDepartments
+      tags:
+        - Departments and Org
+      summary: List departments
+      description: Lists the company's departments.
+      responses:
+        '200':
+          description: A list of departments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createDepartment
+      tags:
+        - Departments and Org
+      summary: Create department
+      description: Creates a new department.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentInput'
+      responses:
+        '201':
+          description: The created department.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /departments/{id}:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    patch:
+      operationId: updateDepartment
+      tags:
+        - Departments and Org
+      summary: Update department
+      description: Updates a department.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentInput'
+      responses:
+        '200':
+          description: The updated department.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteDepartment
+      tags:
+        - Departments and Org
+      summary: Delete department
+      description: Deletes a department.
+      responses:
+        '200':
+          description: Deletion confirmation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{id}/departments:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    get:
+      operationId: listEmployeeDepartments
+      tags:
+        - Departments and Org
+      summary: List employee department assignments
+      description: Lists the departments an employee is assigned to.
+      responses:
+        '200':
+          description: The employee's department assignments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Department'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: assignEmployeeDepartment
+      tags:
+        - Departments and Org
+      summary: Assign employee to department
+      description: Assigns an employee to a department.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - departmentId
+              properties:
+                departmentId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Assignment result.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /offices:
+    get:
+      operationId: listOffices
+      tags:
+        - Departments and Org
+      summary: List offices
+      description: Lists the company's offices (work centers).
+      responses:
+        '200':
+          description: A list of offices.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Office'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createOffice
+      tags:
+        - Departments and Org
+      summary: Create office
+      description: Creates a new office / work center.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfficeInput'
+      responses:
+        '201':
+          description: The created office.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Office'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /organization-chart/manager/{employeeId}:
+    parameters:
+      - name: employeeId
+        in: path
+        required: true
+        description: The ID of the employee.
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getManagerByEmployee
+      tags:
+        - Departments and Org
+      summary: Get manager by employee
+      description: Returns the manager of a given employee in the organization chart.
+      responses:
+        '200':
+          description: The employee's manager.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /planners:
+    get:
+      operationId: listPlanners
+      tags:
+        - Scheduling
+      summary: List planners
+      description: Lists the company's scheduling planners.
+      responses:
+        '200':
+          description: A list of planners.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Planner'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /planners/{id}/shifts:
+    parameters:
+      - $ref: '#/components/parameters/Id'
+    post:
+      operationId: assignPlannerShifts
+      tags:
+        - Scheduling
+      summary: Assign shifts to employees
+      description: Assigns one or more shifts to employees within a planner.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      employeeId:
+                        type: string
+                        format: uuid
+                      shiftId:
+                        type: string
+                        format: uuid
+                      date:
+                        type: string
+                        format: date
+      responses:
+        '200':
+          description: Shift assignment result.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /shifts:
+    get:
+      operationId: listShifts
+      tags:
+        - Scheduling
+      summary: List shifts
+      description: Lists the company's shift definitions.
+      responses:
+        '200':
+          description: A list of shifts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Shift'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createShift
+      tags:
+        - Scheduling
+      summary: Create shift
+      description: Creates a new shift definition.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShiftInput'
+      responses:
+        '201':
+          description: The created shift.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shift'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /schedule-templates:
+    get:
+      operationId: listScheduleTemplates
+      tags:
+        - Scheduling
+      summary: List schedule templates
+      description: Lists reusable schedule templates.
+      responses:
+        '200':
+          description: A list of schedule templates.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /webhooks:
+    post:
+      operationId: manageWebhooks
+      tags:
+        - Webhooks
+      summary: Manage webhooks
+      description: Creates or updates webhook subscriptions that notify your endpoints of Sesame HR events.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                events:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: The webhook subscription.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        Bearer API token generated in the Sesame admin panel under Settings >
+        Integrations > API at app.sesametime.com. Passed as
+        `Authorization: Bearer YOUR_API_TOKEN`.
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: The UUID of the resource.
+      schema:
+        type: string
+        format: uuid
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number for pagination.
+      schema:
+        type: integer
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        default: 100
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    DeleteResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+    PageMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        lastPage:
+          type: integer
+        total:
+          type: integer
+    EmployeeInput:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+        code:
+          type: string
+          description: Employee code / identifier used internally.
+        phone:
+          type: string
+        nid:
+          type: string
+          description: National identity document number.
+    Employee:
+      allOf:
+        - $ref: '#/components/schemas/EmployeeInput'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            companyId:
+              type: string
+              format: uuid
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    EmployeeList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
+    ClockInput:
+      type: object
+      required:
+        - employeeId
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        coordinates:
+          type: object
+          description: Optional GPS coordinates captured at check time.
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
+        origin:
+          type: string
+          description: Origin of the check (for example web, app, or device).
+    WorkEntryInput:
+      type: object
+      required:
+        - employeeId
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        workEntryIn:
+          type: string
+          format: date-time
+          description: Check-in timestamp.
+        workEntryOut:
+          type: string
+          format: date-time
+          description: Check-out timestamp.
+    WorkEntry:
+      allOf:
+        - $ref: '#/components/schemas/WorkEntryInput'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            workedSeconds:
+              type: integer
+            source:
+              type: string
+    DayOffRequestInput:
+      type: object
+      required:
+        - employeeId
+        - from
+        - to
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+        comment:
+          type: string
+    DayOffRequest:
+      allOf:
+        - $ref: '#/components/schemas/DayOffRequestInput'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              type: string
+              enum:
+                - pending
+                - accepted
+                - rejected
+            createdAt:
+              type: string
+              format: date-time
+    DepartmentInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    Department:
+      allOf:
+        - $ref: '#/components/schemas/DepartmentInput'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+    OfficeInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+    Office:
+      allOf:
+        - $ref: '#/components/schemas/OfficeInput'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+    Planner:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    ShiftInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        startTime:
+          type: string
+          description: Shift start time (HH:mm).
+        endTime:
+          type: string
+          description: Shift end time (HH:mm).
+    Shift:
+      allOf:
+        - $ref: '#/components/schemas/ShiftInput'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
