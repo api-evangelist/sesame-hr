@@ -1,0 +1,95 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Sesame HR Public Absences and Leave Scheduling API",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Scheduling",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List planners",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/planners"
+          },
+          "docs": "Lists the company's scheduling planners."
+        },
+        {
+          "info": {
+            "name": "Assign shifts to employees",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/planners/:id/shifts",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Assigns one or more shifts to employees within a planner."
+        },
+        {
+          "info": {
+            "name": "List shifts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/shifts"
+          },
+          "docs": "Lists the company's shift definitions."
+        },
+        {
+          "info": {
+            "name": "Create shift",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/shifts",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new shift definition."
+        },
+        {
+          "info": {
+            "name": "List schedule templates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/schedule-templates"
+          },
+          "docs": "Lists reusable schedule templates."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

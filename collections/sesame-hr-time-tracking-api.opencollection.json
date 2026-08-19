@@ -1,0 +1,132 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Sesame HR Public Absences and Leave Time Tracking API",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Time Tracking",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Clock in",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/work-entries/clock-in",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Registers a check-in (clock-in) for an employee, starting a work entry."
+        },
+        {
+          "info": {
+            "name": "Clock out",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/work-entries/clock-out",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Registers a check-out (clock-out) for an employee, closing the open work entry."
+        },
+        {
+          "info": {
+            "name": "List work entries",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/work-entries",
+            "params": [
+              {
+                "name": "employeeId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "from",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for pagination."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Number of items per page."
+              }
+            ]
+          },
+          "docs": "Lists work entries (time-clock records), filterable by employee and date range."
+        },
+        {
+          "info": {
+            "name": "Create work entry",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/work-entries",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a work entry directly (for manual or corrected time-clock records)."
+        },
+        {
+          "info": {
+            "name": "List worked hours by employee",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/worked-hours",
+            "params": [
+              {
+                "name": "from",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "to",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns aggregated worked-hours totals per employee over a date range."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,167 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Sesame HR Public Absences and Leave Employees API",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Employees",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List employees",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for pagination."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Number of items per page."
+              }
+            ]
+          },
+          "docs": "Lists employees for the company, with pagination and filtering."
+        },
+        {
+          "info": {
+            "name": "Create employee",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new employee record."
+        },
+        {
+          "info": {
+            "name": "Get employee",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ]
+          },
+          "docs": "Retrieves a single employee by ID."
+        },
+        {
+          "info": {
+            "name": "Update employee",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates an existing employee record."
+        },
+        {
+          "info": {
+            "name": "Delete employee",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ]
+          },
+          "docs": "Deletes an employee record."
+        },
+        {
+          "info": {
+            "name": "List employee managers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id/managers",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ]
+          },
+          "docs": "Lists the managers assigned to an employee."
+        },
+        {
+          "info": {
+            "name": "Assign manager",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id/managers",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Assigns a manager to an employee."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

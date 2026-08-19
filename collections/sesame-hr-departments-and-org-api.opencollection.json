@@ -1,0 +1,179 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Sesame HR Public Absences and Leave Departments and Org API",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Departments and Org",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List departments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/departments"
+          },
+          "docs": "Lists the company's departments."
+        },
+        {
+          "info": {
+            "name": "Create department",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/departments",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new department."
+        },
+        {
+          "info": {
+            "name": "Update department",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api-eu1.sesametime.com/core/v3/departments/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates a department."
+        },
+        {
+          "info": {
+            "name": "Delete department",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api-eu1.sesametime.com/core/v3/departments/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ]
+          },
+          "docs": "Deletes a department."
+        },
+        {
+          "info": {
+            "name": "List employee department assignments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id/departments",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ]
+          },
+          "docs": "Lists the departments an employee is assigned to."
+        },
+        {
+          "info": {
+            "name": "Assign employee to department",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/employees/:id/departments",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Assigns an employee to a department."
+        },
+        {
+          "info": {
+            "name": "List offices",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/offices"
+          },
+          "docs": "Lists the company's offices (work centers)."
+        },
+        {
+          "info": {
+            "name": "Create office",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/offices",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new office / work center."
+        },
+        {
+          "info": {
+            "name": "Get manager by employee",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/organization-chart/manager/:employeeId",
+            "params": [
+              {
+                "name": "employeeId",
+                "value": "",
+                "type": "path",
+                "description": "The ID of the employee."
+              }
+            ]
+          },
+          "docs": "Returns the manager of a given employee in the organization chart."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

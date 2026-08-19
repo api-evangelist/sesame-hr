@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Sesame HR Public Absences and Leave API",
+    "version": "3.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Absences and Leave",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List vacation day-off requests",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests",
+            "params": [
+              {
+                "name": "employeeId",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Lists vacation day-off requests, filterable by employee and status."
+        },
+        {
+          "info": {
+            "name": "Create vacation day-off request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a vacation day-off request for an employee."
+        },
+        {
+          "info": {
+            "name": "Accept vacation day-off request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests/:id/accept",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ]
+          },
+          "docs": "Approves a pending vacation day-off request."
+        },
+        {
+          "info": {
+            "name": "Reject vacation day-off request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-eu1.sesametime.com/core/v3/vacation-day-off-requests/:id/reject",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The UUID of the resource."
+              }
+            ]
+          },
+          "docs": "Rejects a pending vacation day-off request."
+        },
+        {
+          "info": {
+            "name": "List holidays",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-eu1.sesametime.com/core/v3/holidays"
+          },
+          "docs": "Lists holidays defined across the company's holiday calendars."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
