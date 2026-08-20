@@ -153,6 +153,8 @@ apis:
   humanURL: https://apidocs.sesametime.com/introduction
   baseURL: https://api-eu1.sesametime.com/core/v3
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
