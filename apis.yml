@@ -10,6 +10,18 @@ description: Sesame HR is an all-in-one HR and time-tracking platform used by sm
   interface authenticated with a Bearer API token, letting teams sync HRIS data
   with payroll and ERP systems, build custom dashboards, and automate onboarding,
   shift assignment, and absence-approval workflows.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
