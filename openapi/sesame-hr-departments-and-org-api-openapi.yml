@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Sesame HR Public Absences and Leave Departments and Org API
-  description: The Sesame Public API (v3) exposes the Sesame HR platform - employees, time tracking (check-in / check-out), work hours, shifts and scheduling, vacations, absences and leave, departments, offices, and the organization chart - over a documented REST interface. All requests are authenticated with a Bearer API token generated in the Sesame admin panel (Settings > Integrations > API at app.sesametime.com). The base host is region-specific (api-{region}.sesametime.com, default region eu1) and every path is prefixed with /core/v3. This document models the subset of the ~500-endpoint API most relevant to HRIS, time-tracking, and workforce-management use cases; endpoint paths and the Bearer scheme are taken from the official documentation, while some request/response field shapes are modeled generically where the public docs do not publish a full schema.
+  title: Sesame HR Public Departments and Org API
+  description: The Sesame Public API (v3) exposes the Sesame HR platform - employees, time tracking (check-in / check-out), work hours, shifts and scheduling, vacations, absences and leave, departments, offices, and the organization chart - over a documented REST interface.
   version: 3.0.0
   contact:
     name: Sesame HR
@@ -224,6 +224,25 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     DepartmentInput:
       type: object
@@ -234,6 +253,60 @@ components:
           type: string
         description:
           type: string
+    DeleteResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+    Employee:
+      allOf:
+      - $ref: '#/components/schemas/EmployeeInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          companyId:
+            type: string
+            format: uuid
+          createdAt:
+            type: string
+            format: date-time
+          updatedAt:
+            type: string
+            format: date-time
+    OfficeInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+    Office:
+      allOf:
+      - $ref: '#/components/schemas/OfficeInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+    Department:
+      allOf:
+      - $ref: '#/components/schemas/DepartmentInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
     EmployeeInput:
       type: object
       required:
@@ -260,14 +333,6 @@ components:
         nid:
           type: string
           description: National identity document number.
-    DeleteResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        deleted:
-          type: boolean
     Error:
       type: object
       properties:
@@ -278,52 +343,6 @@ components:
               type: string
             message:
               type: string
-    OfficeInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        address:
-          type: string
-        city:
-          type: string
-        country:
-          type: string
-    Employee:
-      allOf:
-      - $ref: '#/components/schemas/EmployeeInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-          companyId:
-            type: string
-            format: uuid
-          createdAt:
-            type: string
-            format: date-time
-          updatedAt:
-            type: string
-            format: date-time
-    Office:
-      allOf:
-      - $ref: '#/components/schemas/OfficeInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-    Department:
-      allOf:
-      - $ref: '#/components/schemas/DepartmentInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
   parameters:
     Id:
       name: id
@@ -333,25 +352,6 @@ components:
       schema:
         type: string
         format: uuid
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

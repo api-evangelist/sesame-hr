@@ -1,13 +1,7 @@
 {
   "provider": "sesame-hr",
   "sources": [
-    "sesame-hr-absences-and-leave-api-openapi.yml",
-    "sesame-hr-departments-and-org-api-openapi.yml",
-    "sesame-hr-employees-api-openapi.yml",
-    "sesame-hr-meta-api-openapi.yml",
-    "sesame-hr-scheduling-api-openapi.yml",
-    "sesame-hr-time-tracking-api-openapi.yml",
-    "sesame-hr-webhooks-api-openapi.yml"
+    "_original/sesame-hr-openapi.yml"
   ],
   "outputs": [
     "sesame-hr-absences-and-leave-api-openapi.yml",
@@ -21,6 +15,18 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "sesame-hr-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "sesame-hr-absences-and-leave-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "sesame-hr-departments-and-org-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "sesame-hr-employees-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "sesame-hr-meta-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "sesame-hr-scheduling-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "sesame-hr-time-tracking-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "sesame-hr-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
