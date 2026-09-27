@@ -148,38 +148,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    Shift:
-      allOf:
-      - $ref: '#/components/schemas/ShiftInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
     ShiftInput:
       type: object
       required:
@@ -193,6 +162,24 @@ components:
         endTime:
           type: string
           description: Shift end time (HH:mm).
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+    Shift:
+      allOf:
+      - $ref: '#/components/schemas/ShiftInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
     Planner:
       type: object
       properties:
@@ -210,6 +197,19 @@ components:
       schema:
         type: string
         format: uuid
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

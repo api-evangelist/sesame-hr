@@ -175,41 +175,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    WorkEntry:
-      allOf:
-      - $ref: '#/components/schemas/WorkEntryInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-          workedSeconds:
-            type: integer
-          source:
-            type: string
-    PageMeta:
-      type: object
-      properties:
-        currentPage:
-          type: integer
-        lastPage:
-          type: integer
-        total:
-          type: integer
     WorkEntryInput:
       type: object
       required:
@@ -236,6 +202,27 @@ components:
               type: string
             message:
               type: string
+    PageMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        lastPage:
+          type: integer
+        total:
+          type: integer
+    WorkEntry:
+      allOf:
+      - $ref: '#/components/schemas/WorkEntryInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          workedSeconds:
+            type: integer
+          source:
+            type: string
     ClockInput:
       type: object
       required:
@@ -255,15 +242,20 @@ components:
         origin:
           type: string
           description: Origin of the check (for example web, app, or device).
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
-    Limit:
-      name: limit
-      in: query
-      required: false
-      description: Number of items per page.
-      schema:
-        type: integer
-        default: 100
     Page:
       name: page
       in: query
@@ -272,6 +264,14 @@ components:
       schema:
         type: integer
         default: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        default: 100
   securitySchemes:
     bearerAuth:
       type: http
