@@ -176,41 +176,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    WorkEntryInput:
-      type: object
-      required:
-      - employeeId
-      properties:
-        employeeId:
-          type: string
-          format: uuid
-        workEntryIn:
-          type: string
-          format: date-time
-          description: Check-in timestamp.
-        workEntryOut:
-          type: string
-          format: date-time
-          description: Check-out timestamp.
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-    PageMeta:
-      type: object
-      properties:
-        currentPage:
-          type: integer
-        lastPage:
-          type: integer
-        total:
-          type: integer
     WorkEntry:
       allOf:
       - $ref: '#/components/schemas/WorkEntryInput'
@@ -223,6 +188,16 @@ components:
             type: integer
           source:
             type: string
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     ClockInput:
       type: object
       required:
@@ -242,28 +217,32 @@ components:
         origin:
           type: string
           description: Origin of the check (for example web, app, or device).
-  responses:
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    PageMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        lastPage:
+          type: integer
+        total:
+          type: integer
+    WorkEntryInput:
+      type: object
+      required:
+      - employeeId
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        workEntryIn:
+          type: string
+          format: date-time
+          description: Check-in timestamp.
+        workEntryOut:
+          type: string
+          format: date-time
+          description: Check-out timestamp.
   parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      description: Page number for pagination.
-      schema:
-        type: integer
-        default: 1
     Limit:
       name: limit
       in: query
@@ -272,6 +251,27 @@ components:
       schema:
         type: integer
         default: 100
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number for pagination.
+      schema:
+        type: integer
+        default: 1
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

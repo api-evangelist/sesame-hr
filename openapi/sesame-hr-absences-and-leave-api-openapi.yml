@@ -147,6 +147,23 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    DayOffRequest:
+      allOf:
+      - $ref: '#/components/schemas/DayOffRequestInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          status:
+            type: string
+            enum:
+            - pending
+            - accepted
+            - rejected
+          createdAt:
+            type: string
+            format: date-time
     Error:
       type: object
       properties:
@@ -175,35 +192,9 @@ components:
           format: date
         comment:
           type: string
-    DayOffRequest:
-      allOf:
-      - $ref: '#/components/schemas/DayOffRequestInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-          status:
-            type: string
-            enum:
-            - pending
-            - accepted
-            - rejected
-          createdAt:
-            type: string
-            format: date-time
-  parameters:
-    Id:
-      name: id
-      in: path
-      required: true
-      description: The UUID of the resource.
-      schema:
-        type: string
-        format: uuid
   responses:
-    ValidationError:
-      description: The request payload failed validation.
+    NotFound:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:
@@ -214,12 +205,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
+    ValidationError:
+      description: The request payload failed validation.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: The UUID of the resource.
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

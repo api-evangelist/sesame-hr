@@ -235,23 +235,6 @@ components:
               type: string
             message:
               type: string
-    DeleteResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        deleted:
-          type: boolean
-    DepartmentInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        description:
-          type: string
     EmployeeInput:
       type: object
       required:
@@ -278,19 +261,23 @@ components:
         nid:
           type: string
           description: National identity document number.
-    OfficeInput:
+    DepartmentInput:
       type: object
       required:
       - name
       properties:
         name:
           type: string
-        address:
+        description:
           type: string
-        city:
-          type: string
-        country:
-          type: string
+    Department:
+      allOf:
+      - $ref: '#/components/schemas/DepartmentInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
     Employee:
       allOf:
       - $ref: '#/components/schemas/EmployeeInput'
@@ -316,26 +303,30 @@ components:
           id:
             type: string
             format: uuid
-    Department:
-      allOf:
-      - $ref: '#/components/schemas/DepartmentInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-  parameters:
-    Id:
-      name: id
-      in: path
-      required: true
-      description: The UUID of the resource.
-      schema:
-        type: string
-        format: uuid
+    DeleteResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+    OfficeInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
   responses:
-    ValidationError:
-      description: The request payload failed validation.
+    NotFound:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:
@@ -346,12 +337,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
+    ValidationError:
+      description: The request payload failed validation.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: The UUID of the resource.
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

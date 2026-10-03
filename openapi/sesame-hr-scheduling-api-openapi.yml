@@ -149,19 +149,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    ShiftInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        startTime:
-          type: string
-          description: Shift start time (HH:mm).
-        endTime:
-          type: string
-          description: Shift end time (HH:mm).
     Error:
       type: object
       properties:
@@ -180,6 +167,19 @@ components:
           id:
             type: string
             format: uuid
+    ShiftInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        startTime:
+          type: string
+          description: Shift start time (HH:mm).
+        endTime:
+          type: string
+          description: Shift end time (HH:mm).
     Planner:
       type: object
       properties:
@@ -198,14 +198,14 @@ components:
         type: string
         format: uuid
   responses:
-    ValidationError:
-      description: The request payload failed validation.
+    Unauthorized:
+      description: Missing or invalid Bearer token.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
+    ValidationError:
+      description: The request payload failed validation.
       content:
         application/json:
           schema:
