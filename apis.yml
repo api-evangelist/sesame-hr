@@ -190,6 +190,9 @@ apis:
   - type: OpenCollection
     url: collections/sesame-hr.opencollection.json
 common:
+- type: CapabilityMap
+  url: capabilities/sesame-hr-capability-edges.yml
+  name: Sesame HR Business Capability Map
 - type: AgenticAccess
   url: agentic-access/sesame-hr-agentic-access.yml
 - type: Authentication

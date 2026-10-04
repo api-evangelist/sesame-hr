@@ -1,0 +1,57 @@
+slug: sesame-hr
+provider: Sesame HR
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 4
+edges:
+- tag: Employees
+  spec_file: sesame-hr-employees-api-openapi.yml
+  capability_id: BC-300.70
+  capability_id_l1: BC-300
+  capability_name: HR Operations Management
+  confidence: 0.85
+  evidence: POST /employees createEmployee ... GET /employees/{id}/managers listEmployeeManagers  List
+    employee managers
+  reason: CRUD over employee records and manager assignment in an HR platform is employee record administration,
+    i.e. HR Operations Management under HCM.
+- tag: Absences and Leave
+  spec_file: sesame-hr-absences-and-leave-api-openapi.yml
+  capability_id: BC-300.70
+  capability_id_l1: BC-300
+  capability_name: HR Operations Management
+  confidence: 0.72
+  evidence: POST /vacation-day-off-requests/{id}/accept acceptVacationDayOffRequest Accept vacation day-off
+    request
+  reason: Creation and approval/rejection of employee vacation and day-off requests plus holiday calendars
+    is absence administration within the employee lifecycle; L1 HCM is certain, HR Operations is the best-fitting
+    sub-capability.
+- tag: Scheduling
+  spec_file: sesame-hr-scheduling-api-openapi.yml
+  capability_id: BC-300
+  capability_id_l1: BC-300
+  capability_name: Human Capital Management
+  confidence: 0.7
+  evidence: POST /planners/{id}/shifts assignPlannerShifts  Assign shifts to employees; GET /schedule-templates
+    listScheduleTemplates
+  reason: Shift creation, planners and schedule templates assign work to employees — workforce scheduling
+    within Human Capital Management; the candidate L2 set has no distinct shift-scheduling node, so L1
+    only.
+- tag: Time Tracking
+  spec_file: sesame-hr-time-tracking-api-openapi.yml
+  capability_id: BC-300.70
+  capability_id_l1: BC-300
+  capability_name: HR Operations Management
+  confidence: 0.7
+  evidence: POST /work-entries/clock-in  Clock in; GET /employees/worked-hours  List worked hours by employee
+  reason: Clock-in/out and worked-hours records are employee time administration feeding payroll — HR
+    Operations Management under HCM; no dedicated time-and-attendance L2 exists so HR Operations is the
+    closest fit.
