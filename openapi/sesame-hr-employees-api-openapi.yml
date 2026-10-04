@@ -169,17 +169,68 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number for pagination.
+      schema:
+        type: integer
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        default: 100
+    Id:
+      name: id
+      in: path
+      required: true
+      description: The UUID of the resource.
+      schema:
+        type: string
+        format: uuid
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    Error:
+    DeleteResponse:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
+        id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+    EmployeeList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+        meta:
+          $ref: '#/components/schemas/PageMeta'
     EmployeeInput:
       type: object
       required:
@@ -206,6 +257,16 @@ components:
         nid:
           type: string
           description: National identity document number.
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     Employee:
       allOf:
       - $ref: '#/components/schemas/EmployeeInput'
@@ -223,23 +284,6 @@ components:
           updatedAt:
             type: string
             format: date-time
-    DeleteResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        deleted:
-          type: boolean
-    EmployeeList:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Employee'
-        meta:
-          $ref: '#/components/schemas/PageMeta'
     PageMeta:
       type: object
       properties:
@@ -249,50 +293,6 @@ components:
           type: integer
         total:
           type: integer
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-  parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      description: Page number for pagination.
-      schema:
-        type: integer
-        default: 1
-    Limit:
-      name: limit
-      in: query
-      required: false
-      description: Number of items per page.
-      schema:
-        type: integer
-        default: 100
-    Id:
-      name: id
-      in: path
-      required: true
-      description: The UUID of the resource.
-      schema:
-        type: string
-        format: uuid
   securitySchemes:
     bearerAuth:
       type: http

@@ -176,28 +176,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    WorkEntry:
-      allOf:
-      - $ref: '#/components/schemas/WorkEntryInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-          workedSeconds:
-            type: integer
-          source:
-            type: string
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
     ClockInput:
       type: object
       required:
@@ -217,15 +195,16 @@ components:
         origin:
           type: string
           description: Origin of the check (for example web, app, or device).
-    PageMeta:
+    Error:
       type: object
       properties:
-        currentPage:
-          type: integer
-        lastPage:
-          type: integer
-        total:
-          type: integer
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     WorkEntryInput:
       type: object
       required:
@@ -242,15 +221,28 @@ components:
           type: string
           format: date-time
           description: Check-out timestamp.
+    PageMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        lastPage:
+          type: integer
+        total:
+          type: integer
+    WorkEntry:
+      allOf:
+      - $ref: '#/components/schemas/WorkEntryInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          workedSeconds:
+            type: integer
+          source:
+            type: string
   parameters:
-    Limit:
-      name: limit
-      in: query
-      required: false
-      description: Number of items per page.
-      schema:
-        type: integer
-        default: 100
     Page:
       name: page
       in: query
@@ -259,15 +251,23 @@ components:
       schema:
         type: integer
         default: 1
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Number of items per page.
+      schema:
+        type: integer
+        default: 100
   responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
+    ValidationError:
+      description: The request payload failed validation.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
+    Unauthorized:
+      description: Missing or invalid Bearer token.
       content:
         application/json:
           schema:

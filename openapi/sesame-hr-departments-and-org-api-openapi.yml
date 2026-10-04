@@ -224,17 +224,43 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    Error:
+    DeleteResponse:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
+        id:
+          type: string
+          format: uuid
+        deleted:
+          type: boolean
+    DepartmentInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
     EmployeeInput:
       type: object
       required:
@@ -261,23 +287,37 @@ components:
         nid:
           type: string
           description: National identity document number.
-    DepartmentInput:
+    Office:
+      allOf:
+      - $ref: '#/components/schemas/OfficeInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+    OfficeInput:
       type: object
       required:
       - name
       properties:
         name:
           type: string
-        description:
+        address:
           type: string
-    Department:
-      allOf:
-      - $ref: '#/components/schemas/DepartmentInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
+        city:
+          type: string
+        country:
+          type: string
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
     Employee:
       allOf:
       - $ref: '#/components/schemas/EmployeeInput'
@@ -295,54 +335,14 @@ components:
           updatedAt:
             type: string
             format: date-time
-    Office:
+    Department:
       allOf:
-      - $ref: '#/components/schemas/OfficeInput'
+      - $ref: '#/components/schemas/DepartmentInput'
       - type: object
         properties:
           id:
             type: string
             format: uuid
-    DeleteResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        deleted:
-          type: boolean
-    OfficeInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        address:
-          type: string
-        city:
-          type: string
-        country:
-          type: string
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   parameters:
     Id:
       name: id

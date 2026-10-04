@@ -146,7 +146,44 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    ValidationError:
+      description: The request payload failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    DayOffRequestInput:
+      type: object
+      required:
+      - employeeId
+      - from
+      - to
+      properties:
+        employeeId:
+          type: string
+          format: uuid
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+        comment:
+          type: string
     DayOffRequest:
       allOf:
       - $ref: '#/components/schemas/DayOffRequestInput'
@@ -174,43 +211,6 @@ components:
               type: string
             message:
               type: string
-    DayOffRequestInput:
-      type: object
-      required:
-      - employeeId
-      - from
-      - to
-      properties:
-        employeeId:
-          type: string
-          format: uuid
-        from:
-          type: string
-          format: date
-        to:
-          type: string
-          format: date
-        comment:
-          type: string
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    ValidationError:
-      description: The request payload failed validation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   parameters:
     Id:
       name: id
