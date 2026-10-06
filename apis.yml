@@ -58,7 +58,7 @@ tags_raw:
 - Scheduling
 - Payroll
 created: '2026-07-11'
-modified: '2026-07-11'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
 - aid: sesame-hr:sesame-hr-absences-and-leave-api
@@ -190,6 +190,8 @@ apis:
   - type: OpenCollection
     url: collections/sesame-hr.opencollection.json
 common:
+- url: https://www.sesamehr.com/blog/
+  type: Blog
 - type: CapabilityMap
   url: capabilities/sesame-hr-capability-edges.yml
   name: Sesame HR Business Capability Map
