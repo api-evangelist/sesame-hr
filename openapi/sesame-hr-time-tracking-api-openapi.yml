@@ -195,6 +195,15 @@ components:
         origin:
           type: string
           description: Origin of the check (for example web, app, or device).
+    PageMeta:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+        lastPage:
+          type: integer
+        total:
+          type: integer
     Error:
       type: object
       properties:
@@ -205,6 +214,18 @@ components:
               type: string
             message:
               type: string
+    WorkEntry:
+      allOf:
+      - $ref: '#/components/schemas/WorkEntryInput'
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+          workedSeconds:
+            type: integer
+          source:
+            type: string
     WorkEntryInput:
       type: object
       required:
@@ -221,36 +242,7 @@ components:
           type: string
           format: date-time
           description: Check-out timestamp.
-    PageMeta:
-      type: object
-      properties:
-        currentPage:
-          type: integer
-        lastPage:
-          type: integer
-        total:
-          type: integer
-    WorkEntry:
-      allOf:
-      - $ref: '#/components/schemas/WorkEntryInput'
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-          workedSeconds:
-            type: integer
-          source:
-            type: string
   parameters:
-    Page:
-      name: page
-      in: query
-      required: false
-      description: Page number for pagination.
-      schema:
-        type: integer
-        default: 1
     Limit:
       name: limit
       in: query
@@ -259,6 +251,14 @@ components:
       schema:
         type: integer
         default: 100
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number for pagination.
+      schema:
+        type: integer
+        default: 1
   responses:
     ValidationError:
       description: The request payload failed validation.
